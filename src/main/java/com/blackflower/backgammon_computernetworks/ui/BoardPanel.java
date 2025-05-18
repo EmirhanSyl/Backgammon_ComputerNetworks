@@ -149,9 +149,12 @@ public final class BoardPanel extends JPanel {
     private int screenToPoint(int x, int y) {
         int relX = x - PADDING;
         int relY = y - PADDING;
-
+        int barLeft = TRI_W * 6;
+        
         if (relX < 0 || relY < 0 || relX > TRI_W * 12 + BAR_W || relY > TRI_H * 2) return -1;
-        // bar tıklaması şimdilik yok
+        // ► BAR ◄
+        if (relX >= barLeft && relX <= barLeft + BAR_W) return 0;
+        
         boolean bottom = relY > TRI_H;
         int col = relX < TRI_W * 6 ? (relX / TRI_W) : ((relX - BAR_W) / TRI_W);
         int idx = bottom ? 12 - col : 13 + col;
@@ -163,6 +166,14 @@ public final class BoardPanel extends JPanel {
         if (mp == null) return;
         int sel = mp.getSelectedPoint();
         if (sel == -1 || sel == 25) return;
+        if (sel == 0) {                                        // BAR
+            Rectangle r = checkerBoundsBar(ctx.state().getCurrentTurn());
+            g.setStroke(new BasicStroke(4));
+            g.setColor(HIGHLIGHT);
+            g.drawOval(r.x - 2, r.y - 2, r.width + 4, r.height + 4);
+            return;
+        }
+
         com.blackflower.backgammon_computernetworks.model.Point p = ctx.state().getPoint(sel);
         if (p.isEmpty()) return;
         
@@ -172,6 +183,8 @@ public final class BoardPanel extends JPanel {
         g.setColor(HIGHLIGHT);
         g.drawOval(r.x - 2, r.y - 2, r.width + 4, r.height + 4);
     }
+    
+    
     
     private void drawPossibleTargets(Graphics2D g) {
         MovePhaseController mp = ctx.asMovePhase();
@@ -188,6 +201,7 @@ public final class BoardPanel extends JPanel {
     
     /** Seçilen nokta & seviye için pulun “piksel” koordinatlarını verir. */
     private Rectangle checkerBounds(int pointIdx, int stackIndex) {
+        if (pointIdx == 0) return checkerBoundsBar(ctx.state().getCurrentTurn());
         int xTile = (pointIdx <= 12 ? 12 - pointIdx : pointIdx - 13);
         int colX  = PADDING + (xTile % 6) * TRI_W +
                     (xTile >= 6 ? BAR_W + TRI_W * 6 : 0) + TRI_W / 2 - CHECKER_R;
@@ -197,5 +211,15 @@ public final class BoardPanel extends JPanel {
         int dy = bottom ? -CHECKER_R * 2 : CHECKER_R * 2;
         int y = startY + dy * stackIndex;
         return new Rectangle(colX, y, CHECKER_R * 2, CHECKER_R * 2);
+    }
+    
+    private Rectangle checkerBoundsBar(PlayerColor color) {
+        int barX = PADDING + TRI_W * 6 + BAR_W / 2 - CHECKER_R;
+        int idx  = ctx.state().checkersOnBar(color) - 1;
+        if (idx < 0) idx = 0;
+        int y = color == PlayerColor.WHITE
+                ? PADDING + TRI_H - CHECKER_R * 2 - idx * CHECKER_R * 2   // üst
+                : PADDING + TRI_H + idx * CHECKER_R * 2;                  // alt
+        return new Rectangle(barX, y, CHECKER_R * 2, CHECKER_R * 2);
     }
 }

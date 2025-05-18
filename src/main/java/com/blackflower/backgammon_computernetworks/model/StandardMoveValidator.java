@@ -13,7 +13,7 @@ public final class StandardMoveValidator implements MoveValidator {
         /* -- Bar’dan giriş zorunluluğu -- */
         if (st.checkersOnBar(c) > 0 && mv.from() != 0) return false;
         if (mv.from() == 0) {
-            int entry = c == PlayerColor.WHITE ? 25 - die : die;
+            int entry = c == PlayerColor.WHITE ? die : 25 - die;
             return mv.to() == entry && canLand(st, c, mv.to());
         }
 
@@ -25,8 +25,17 @@ public final class StandardMoveValidator implements MoveValidator {
     }
 
     private boolean canLand(GameState st, PlayerColor c, int point) {
-        if (point == 25) return true;   // bear-off
-        Point dest = st.getPoint(point);
+        // bearing-off
+        if (point == 25) {
+            return true;
+        }
+
+        // tahta dışı veya bar (0) => inilemez
+        if (point < 1 || point > 24) {
+            return false;
+        }
+
+        Point dest = st.getPoint(point);          // artık null olamaz
         return dest.size() < 2 || dest.peek().color() == c;
     }
 }
