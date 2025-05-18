@@ -22,13 +22,13 @@ public final class OnlineMoveController extends GameStateControllerAdapter {
     @Override
     public void onPointSelected(GameContext ctx, int point) {
 
-        /* sıra bende mi?  */
+        /* 1) sıra bende mi? */
         if (state.getCurrentTurn() != myColor) {
             selected = -1;
             return;
         }
 
-        /* ilk tıklama → pul seç */
+        /* 2) ilk tıklama → pul seç */
         if (selected == -1) {
             if (point == 0
                     || // bar
@@ -39,20 +39,20 @@ public final class OnlineMoveController extends GameStateControllerAdapter {
             return;
         }
 
-        /* ikinci tıklama → hedef */
-        int die = DieMatcher.findDieIndex(state, selected, point);
-        System.out.println("Die: " + die);
-        if (die == -1) {
+        /* 3) ikinci tıklama → hedef belirle */
+        int dieIdx = DieMatcher.findDieIndex(state, selected, point);
+        if (dieIdx == -1) {
             selected = -1;
             return;
-        }                   // uygun zar yok
+        }
 
-        /* hamleyi sunucuya gönder; yerel model değişmez */
+        /* 4) MOVE mesajını zar İNDİSİ ile gönder */
         net.send(new LegacyMessage("MOVE")
                 .put("from", selected)
                 .put("to", point)
-                .put("dieUsed", die));
-        selected = -1;
+                .put("dieIdx", dieIdx));
+
+        selected = -1;                                // highlight sıfırla
     }
 
     /* ----------------  BoardPanel için ---------------- */

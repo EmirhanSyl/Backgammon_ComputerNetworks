@@ -70,40 +70,54 @@ public final class BackgammonServer {
     }
 
     /* ------------- Hamle İşle ---------- */
-    private synchronized void handleMove(ClientHandler from, int src, int dst, int die) {
+    private synchronized void handleMove(ClientHandler from,
+            int src, int dst, int dieIdx) {
+
+        /* 0) sıra kontrolü */
         if (from.color != currentTurn) {
-            from.send(new LegacyMessage("ILLEGAL_MOVE").put("reason", "Not your turn"));
+            from.send(new LegacyMessage("ILLEGAL_MOVE")
+                    .put("reason", "Not your turn"));
             return;
         }
+
+        /* 1) hamleyi doğrula */
+        int dieVal = state.getDice()[dieIdx % 2].get();
         Move mv = new Move(src, dst);
-        if (!validator.isLegal(state, mv, die)) {
-            from.send(new LegacyMessage("ILLEGAL_MOVE").put("reason", "Illegal by rules"));
+        if (!validator.isLegal(state, mv, dieVal)) {
+            from.send(new LegacyMessage("ILLEGAL_MOVE")
+                    .put("reason", "Illegal by rules"));
             return;
         }
+
+        /* 2) hamleyi uygula */
         state.moveChecker(src, dst);
-        markDieUsed(die);
+        state.getDiceUsed()[dieIdx] = true;           // << doğru indisi işaretle
+
+        /* 3) sıra değişimi + zar at */
         if (state.allDiceUsed()) {
-            currentTurn = (currentTurn == PlayerColor.WHITE) ? PlayerColor.BLACK : PlayerColor.WHITE;
-            state.setCurrentTurn(currentTurn);
+            currentTurn = (currentTurn == PlayerColor.WHITE)
+                    ? PlayerColor.BLACK : PlayerColor.WHITE;
+            state.setCurrentTurn(currentTurn);        // modelle senkron
             state.rollDice();
         }
+
+        /* 4) oyun bitti mi? */
         if (state.allBorneOff(from.color)) {
             broadcast(new LegacyMessage("STATE_UPDATE")
                     .put("state", encodeState(state))
                     .put("dice", diceString())
                     .put("currentPlayer", currentTurn));
-            broadcast(new LegacyMessage("GAME_OVER").put("winnerColor", from.color));
+            broadcast(new LegacyMessage("GAME_OVER")
+                    .put("winnerColor", from.color));
             resetRoom();
             return;
         }
-        
-        LegacyMessage msg = new LegacyMessage("STATE_UPDATE")
+
+        /* 5) normal durum – herkese güncel tahta */
+        broadcast(new LegacyMessage("STATE_UPDATE")
                 .put("state", encodeState(state))
                 .put("dice", diceString())
-                .put("currentPlayer", currentTurn);
-        
-        System.out.println("Send Move Message: " + msg.toString());
-        broadcast(msg);
+                .put("currentPlayer", currentTurn));
     }
 
     /* ------------- Yardımcılar --------- */
@@ -187,7 +201,7 @@ public final class BackgammonServer {
                     System.out.println("Message Recieved From Color:" + color.toString() + " Message: " + m.toString());
                     switch (m.type()) {
                         case "MOVE" -> handleMove(this,
-                                m.getInt("from"), m.getInt("to"), m.getInt("dieUsed"));
+                                m.getInt("from"), m.getInt("to"), m.getInt("dieIdx"));
                         case "PING" -> send(new LegacyMessage("PONG"));
                         default     -> send(new LegacyMessage("ERROR")
                                             .put("message", "Unknown type " + m.type()));
