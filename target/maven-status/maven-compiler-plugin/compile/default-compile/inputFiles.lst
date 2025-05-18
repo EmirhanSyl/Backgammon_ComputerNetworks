@@ -14,4 +14,13 @@ C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\j
 C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\model\PlayerColor.java
 C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\model\Point.java
 C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\model\StandardMoveValidator.java
+C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\server\BackgammonClientApp.java
+C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\server\BackgammonServer.java
+C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\server\ClientNetwork.java
+C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\server\GameScreen.java
+C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\server\LegacyMessage.java
+C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\server\OnlineMoveController.java
+C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\server\StartScreen.java
+C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\server\StateCodec.java
+C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\server\WaitingScreen.java
 C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\ui\BoardPanel.java

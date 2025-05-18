@@ -14,6 +14,20 @@ public final class GameState {
     private boolean[] diceUsed = new boolean[4];   // duble durumunda 4 hamle
     private PlayerColor currentTurn;
     private int barWhite = 0, barBlack = 0;
+    
+    private int borneOffWhite = 0, borneOffBlack = 0;     // topladıklarımız
+
+    /* ---------- Bearing-off sayaçları ------------------------------- */
+    public void bearOff(Checker ch) {
+        if (ch.color() == PlayerColor.WHITE) borneOffWhite++;
+        else borneOffBlack++;
+    }
+    public int borneOff(PlayerColor c) {
+        return c == PlayerColor.WHITE ? borneOffWhite : borneOffBlack;
+    }
+    public boolean allBorneOff(PlayerColor c) {           // 15 pulu topladı mı?
+        return borneOff(c) >= 15;
+    }
 
     public GameState() {
         // 0 = bar, 1-24 = gerçek noktalar, 25 = bear-off
@@ -100,6 +114,7 @@ public final class GameState {
         }
 
         if (to == 25) {              // bear-off
+            bearOff(ch);
             return;                  // checker oyundan çıktı
         }
 
@@ -113,21 +128,29 @@ public final class GameState {
     }
 
     public boolean canBearOff(PlayerColor c) {
-        int start = c.homeStart;
-        int end = start + 5 * c.direction;
-        for (int i = start; c.direction > 0 ? i <= end : i >= end; i += c.direction) {
-            if (board.get(i).size() > 0 && board.get(i).peek().color() != c) {
-                return false;
+        // Bar’da pulu varsa toplama yapamaz
+        if (checkersOnBar(c) > 0) {
+            return false;
+        }
+
+        for (int idx = 1; idx <= 24; idx++) {
+            Point p = board.get(idx);
+            if (p.isEmpty() || p.peek().color() != c) {
+                continue;
+            }
+
+            // WHITE için ev 19-24, BLACK için 1-6
+            if (c.direction > 0) {          // WHITE
+                if (idx < 19) {
+                    return false; // ev dışı
+                }
+            } else {                        // BLACK
+                if (idx > 6) {
+                    return false; // ev dışı
+                }
             }
         }
-        // evde olmayan pul var mı?
-        int oppositeDir = c.direction > 0 ? -1 : 1;
-        for (int i = start + 6 * oppositeDir; (oppositeDir > 0 ? i <= 24 : i >= 1); i += oppositeDir) {
-            if (board.get(i).size() > 0 && board.get(i).peek().color() == c) {
-                return false;
-            }
-        }
-        return true;
+        return true;    // tüm pullar evde
     }
 
     /* ---------- Getters / setters --------------------------------------- */

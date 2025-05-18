@@ -46,6 +46,7 @@ public final class BoardPanel extends JPanel {
 
         drawSelection(g2);
         drawPossibleTargets(g2);
+        drawBearOffCounters(g2);
         
         g2.dispose();
     }
@@ -184,7 +185,24 @@ public final class BoardPanel extends JPanel {
         g.drawOval(r.x - 2, r.y - 2, r.width + 4, r.height + 4);
     }
     
-    
+    private void drawBearOffCounters(Graphics2D g) {
+        GameState st = ctx.state();
+        g.setFont(new Font("SansSerif", Font.BOLD, 16));
+
+        // Beyaz (sağ üst)
+        String w = "♔ " + st.borneOff(PlayerColor.WHITE);
+        int wX = getWidth() - PADDING - g.getFontMetrics().stringWidth(w);
+        int wY = PADDING + 16;
+        g.setColor(Color.WHITE);
+        g.drawString(w, wX, wY);
+
+        // Siyah (sol alt)
+        String b = "♚ " + st.borneOff(PlayerColor.BLACK);
+        int bX = PADDING;
+        int bY = getHeight() - PADDING;
+        g.setColor(Color.BLACK);
+        g.drawString(b, bX, bY);
+    }
     
     private void drawPossibleTargets(Graphics2D g) {
         MovePhaseController mp = ctx.asMovePhase();

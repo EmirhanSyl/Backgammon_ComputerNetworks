@@ -5,6 +5,7 @@ import com.blackflower.backgammon_computernetworks.model.GameState;
 import com.blackflower.backgammon_computernetworks.model.Move;
 import com.blackflower.backgammon_computernetworks.model.PlayerColor;
 import com.blackflower.backgammon_computernetworks.model.Point;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -82,6 +83,14 @@ public class MovePhaseController implements GameStateController {
         Move mv = new Move(selectedPoint, point);
         if (ctx.validator().isLegal(st, mv, st.getDice()[dieIdx % 2].get())) {
             ctx.applyMove(mv, dieIdx);
+            // Oyun bitti mi?
+            if (st.allBorneOff(st.getCurrentTurn())) {
+                JOptionPane.showMessageDialog(null,
+                    (st.getCurrentTurn() == PlayerColor.WHITE ? "Beyaz" : "Siyah") +
+                    " 15 taşı da topladı — Oyun bitti!",
+                    "Tebrikler", JOptionPane.INFORMATION_MESSAGE);
+                System.exit(0);          // basit son; ileride yeniden başlatma ekranı ekleyebilirsiniz
+            }
             if (st.allDiceUsed()) {
                 ctx.endTurn();
                 skipIfStuck(ctx);

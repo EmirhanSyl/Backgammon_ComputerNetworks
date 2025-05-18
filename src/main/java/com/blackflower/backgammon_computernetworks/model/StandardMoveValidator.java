@@ -6,21 +6,51 @@ package com.blackflower.backgammon_computernetworks.model;
  */
 public final class StandardMoveValidator implements MoveValidator {
 
+
+    
     @Override
     public boolean isLegal(GameState st, Move mv, int die) {
         PlayerColor c = st.getCurrentTurn();
 
-        /* -- Bar’dan giriş zorunluluğu -- */
-        if (st.checkersOnBar(c) > 0 && mv.from() != 0) return false;
+        if (st.checkersOnBar(c) > 0 && mv.from() != 0)
+            return false;
+
         if (mv.from() == 0) {
-            int entry = c == PlayerColor.WHITE ? die : 25 - die;
-            return mv.to() == entry && canLand(st, c, mv.to());
+            int entry = (c.direction > 0) ? die : 25 - die;
+            return mv.to() == entry && canLand(st, c, entry);
         }
 
-        /* -- Yön ve mesafe -- */
-        int expectedTo = mv.from() + die * c.direction;
-        if (mv.to() != expectedTo && !(st.canBearOff(c) && mv.to() == 25)) return false;
+        int expected = mv.from() + die * c.direction;
 
+        /* 2-a) BEARING-OFF BLOĞU ------------------------- */
+        if (st.canBearOff(c)) {
+            // Hamle doğrudan dışarı toplama (to == 25)
+            if (mv.to() == 25) {
+                // A) Tam zar → expected tam 25 olmalı
+                if (expected == 25) return true;
+
+                boolean hasCheckerFurther = false;
+                int step = c.direction;                 // +1 ya da -1
+                for (int p = mv.from() - step;
+                     (step > 0 ? p >= c.homeStart : p <= c.homeStart);
+                     p -= step)
+                {
+                    Point pt = st.getPoint(p);
+                    if (!pt.isEmpty() && pt.peek().color() == c) {
+                        hasCheckerFurther = true;
+                        break;
+                    }
+                }
+                if (!hasCheckerFurther &&                // arkada pul yok
+                    ((c.direction > 0 && expected > 25) ||
+                     (c.direction < 0 && expected < 25)))
+                    return true;                         // büyük zarla topla
+
+                return false;
+            }
+        }
+        /* 2-b) NORMAL KARAYA İNİŞ ----------------------- */
+        if (mv.to() != expected) return false;           // yanlış mesafe
         return canLand(st, c, mv.to());
     }
 
