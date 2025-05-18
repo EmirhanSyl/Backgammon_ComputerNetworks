@@ -13,7 +13,7 @@ public final class ClientNetwork implements Closeable {
     private final Socket socket;
     private final BufferedReader in;
     private final PrintWriter out;
-    private final Consumer<LegacyMessage> onMsg;
+    private volatile Consumer<LegacyMessage> onMsg;
 
     public ClientNetwork(String host,int port,Consumer<LegacyMessage> onMsg)
             throws IOException{
@@ -37,6 +37,10 @@ public final class ClientNetwork implements Closeable {
         }
     }
     public void send(LegacyMessage m){ out.println(m.encode()); }
-
+    
+    public void setConsumer(Consumer<LegacyMessage> c) { // <-- yeni
+        this.onMsg = c;
+    }
+    
     @Override public void close() throws IOException { socket.close(); }
 }

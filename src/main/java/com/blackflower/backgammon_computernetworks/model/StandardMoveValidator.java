@@ -11,6 +11,7 @@ public final class StandardMoveValidator implements MoveValidator {
     @Override
     public boolean isLegal(GameState st, Move mv, int die) {
         PlayerColor c = st.getCurrentTurn();
+        System.out.println("Color: " + c.toString());
 
         if (st.checkersOnBar(c) > 0 && mv.from() != 0)
             return false;
@@ -50,6 +51,7 @@ public final class StandardMoveValidator implements MoveValidator {
             }
         }
         /* 2-b) NORMAL KARAYA İNİŞ ----------------------- */
+        System.out.println("Expected: " + expected + " To: " + mv.to());
         if (mv.to() != expected) return false;           // yanlış mesafe
         return canLand(st, c, mv.to());
     }

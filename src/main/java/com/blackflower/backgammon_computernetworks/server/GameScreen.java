@@ -11,15 +11,14 @@ import java.awt.*;
  */
 public final class GameScreen extends JFrame {
 
-    public final GameState state;
+    final GameState state = new GameState();
     private final ClientNetwork net;
-    public final BoardPanel board;
+    final BoardPanel board;
 
     public GameScreen(ClientNetwork net, PlayerColor myColor){
         this.net = net;
-        this.state = new GameState();          // boş başlatılacak
         GameContext ctx = new GameContext(state,new StandardMoveValidator());
-        ctx.setStateController(new OnlineMoveController(net,state));
+        ctx.setStateController(new OnlineMoveController(net,state, myColor));
 
         board = new BoardPanel(ctx);
 
@@ -31,20 +30,27 @@ public final class GameScreen extends JFrame {
         setVisible(true);
     }
 
-    /* ---------------- Mesaj İşle ---------------- */
+    /* -------------- Sunucudan gelen her mesaj -------------- */
     public void onMessage(LegacyMessage m){
+        System.out.println("Message Recieved: " + m.toString());
         switch(m.type()){
-            case "STATE_UPDATE" -> {
-                StateCodec.apply(m.get("state"), state);
+            case "START","STATE_UPDATE" -> {
+                if(m.has("state"))
+                    StateCodec.apply(m.get("state"), state);
+
+                if (m.has("dice")) {                  // sadece zar değerini ayarla
+                    String[] d = m.get("dice").split(",");
+                    state.getDice()[0].set(Integer.parseInt(d[0]));
+                    state.getDice()[1].set(Integer.parseInt(d[1]));
+                }
                 board.repaint();
             }
-            case "GAME_OVER" -> {
-                JOptionPane.showMessageDialog(this,
-                        "Kazanan: "+m.get("winnerColor"));
-            }
             case "ILLEGAL_MOVE" -> JOptionPane.showMessageDialog(this,
-                        "Geçersiz hamle: "+m.get("reason"));
-            case "ERROR" -> JOptionPane.showMessageDialog(this, m.get("message"));
+                    "Geçersiz hamle: "+m.get("reason"));
+            case "GAME_OVER" -> JOptionPane.showMessageDialog(this,
+                    "Kazanan: "+m.get("winnerColor"));
+            case "ERROR" -> JOptionPane.showMessageDialog(this,
+                    m.get("message"),"Sunucu",JOptionPane.ERROR_MESSAGE);
         }
     }
 }

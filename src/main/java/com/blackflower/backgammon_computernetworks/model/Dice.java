@@ -20,6 +20,10 @@ public class Dice {
         return value;
     }
 
+    public void set(int v) {
+        this.value = v;
+    }
+
     @Override
     public String toString() {
         return Integer.toString(value);

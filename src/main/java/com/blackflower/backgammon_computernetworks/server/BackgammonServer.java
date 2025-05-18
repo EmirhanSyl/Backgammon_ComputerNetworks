@@ -55,6 +55,7 @@ public final class BackgammonServer {
     private synchronized void beginGame() {
         state = GameInitializer.defaultSetup();
         currentTurn = PlayerColor.WHITE;
+        state.setCurrentTurn(currentTurn);
         players.get(0).color = PlayerColor.WHITE;
         players.get(1).color = PlayerColor.BLACK;
 
@@ -83,6 +84,7 @@ public final class BackgammonServer {
         markDieUsed(die);
         if (state.allDiceUsed()) {
             currentTurn = (currentTurn == PlayerColor.WHITE) ? PlayerColor.BLACK : PlayerColor.WHITE;
+            state.setCurrentTurn(currentTurn);
             state.rollDice();
         }
         if (state.allBorneOff(from.color)) {
@@ -94,10 +96,14 @@ public final class BackgammonServer {
             resetRoom();
             return;
         }
-        broadcast(new LegacyMessage("STATE_UPDATE")
+        
+        LegacyMessage msg = new LegacyMessage("STATE_UPDATE")
                 .put("state", encodeState(state))
                 .put("dice", diceString())
-                .put("currentPlayer", currentTurn));
+                .put("currentPlayer", currentTurn);
+        
+        System.out.println("Send Move Message: " + msg.toString());
+        broadcast(msg);
     }
 
     /* ------------- Yardımcılar --------- */
@@ -125,8 +131,18 @@ public final class BackgammonServer {
         sb.append("barW=").append(st.checkersOnBar(PlayerColor.WHITE)).append(';');
         sb.append("barB=").append(st.checkersOnBar(PlayerColor.BLACK)).append(';');
         sb.append("offW=").append(st.borneOff(PlayerColor.WHITE)).append(';');
-        sb.append("offB=").append(st.borneOff(PlayerColor.BLACK));
+        sb.append("offB=").append(st.borneOff(PlayerColor.BLACK)).append(';');
+        sb.append("diceUsed=").append(usedMask(state.getDiceUsed())).append(';');
+        sb.append("turn=").append(currentTurn.name());
         return sb.toString();
+    }
+
+    private String usedMask(boolean[] arr) {
+        StringBuilder b = new StringBuilder();
+        for (boolean u : arr) {
+            b.append(u ? '1' : '0');
+        }
+        return b.toString();
     }
     /** Ters işlem (isteyen istemci tarafında yapsın). */
 
@@ -168,6 +184,7 @@ public final class BackgammonServer {
                 String line;
                 while ((line = in.readLine()) != null) {
                     LegacyMessage m = LegacyMessage.decode(line);
+                    System.out.println("Message Recieved From Color:" + color.toString() + " Message: " + m.toString());
                     switch (m.type()) {
                         case "MOVE" -> handleMove(this,
                                 m.getInt("from"), m.getInt("to"), m.getInt("dieUsed"));

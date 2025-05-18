@@ -8,6 +8,7 @@ C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\j
 C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\model\Checker.java
 C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\model\Dice.java
 C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\model\GameState.java
+C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\model\GameStateControllerAdapter.java
 C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\model\Move.java
 C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\model\MoveValidator.java
 C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\model\Player.java
@@ -17,6 +18,7 @@ C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\j
 C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\server\BackgammonClientApp.java
 C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\server\BackgammonServer.java
 C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\server\ClientNetwork.java
+C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\server\DieMatcher.java
 C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\server\GameScreen.java
 C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\server\LegacyMessage.java
 C:\Users\emirs\Documents\NetBeansProjects\Backgammon_ComputerNetworks\src\main\java\com\blackflower\backgammon_computernetworks\server\OnlineMoveController.java

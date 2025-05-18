@@ -4,6 +4,7 @@ import com.blackflower.backgammon_computernetworks.model.GameState;
 import com.blackflower.backgammon_computernetworks.model.Move;
 import com.blackflower.backgammon_computernetworks.model.MoveValidator;
 import com.blackflower.backgammon_computernetworks.model.PlayerColor;
+import com.blackflower.backgammon_computernetworks.server.OnlineMoveController;
 
 /**
  *
@@ -18,6 +19,10 @@ public final class GameContext {
     public GameContext(GameState state, MoveValidator validator) {
         this.state = state;
         this.validator = validator;
+    }
+    
+    public OnlineMoveController asOnline() {                   // <-- eklendi
+        return (stateController instanceof OnlineMoveController omc) ? omc : null;
     }
 
     /* ---------- State machine bağlantıları ------------------------------ */

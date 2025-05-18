@@ -10,6 +10,7 @@ import com.blackflower.backgammon_computernetworks.model.Checker;
 import com.blackflower.backgammon_computernetworks.model.Dice;
 import com.blackflower.backgammon_computernetworks.model.GameState;
 import com.blackflower.backgammon_computernetworks.model.PlayerColor;
+import com.blackflower.backgammon_computernetworks.server.OnlineMoveController;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -163,7 +164,7 @@ public final class BoardPanel extends JPanel {
     }
     
     private void drawSelection(Graphics2D g) {
-        MovePhaseController mp = ctx.asMovePhase();
+        OnlineMoveController mp = ctx.asOnline(); 
         if (mp == null) return;
         int sel = mp.getSelectedPoint();
         if (sel == -1 || sel == 25) return;
@@ -205,9 +206,9 @@ public final class BoardPanel extends JPanel {
     }
     
     private void drawPossibleTargets(Graphics2D g) {
-        MovePhaseController mp = ctx.asMovePhase();
+        OnlineMoveController mp = ctx.asOnline(); 
         if (mp == null) return;
-        for (int tgt : mp.getLegalTargets(ctx)) {
+        for (int tgt : mp.getLegalTargets()) {
             if (tgt == 25) continue; // bear-off işareti şimdilik yok
             Rectangle r = checkerBounds(tgt, ctx.state().getPoint(tgt).size());
             int cx = r.x + r.width / 2 - 6;

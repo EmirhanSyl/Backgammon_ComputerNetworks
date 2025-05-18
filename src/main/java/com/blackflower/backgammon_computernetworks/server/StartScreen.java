@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public final class StartScreen extends JFrame {
 
-    private final JTextField ipField   = new JTextField("3.122.xx.xx");
+    private final JTextField ipField   = new JTextField("127.0.0.1");
     private final JTextField portField = new JTextField("9000");
     private final JTextField nickField = new JTextField("Player");
 

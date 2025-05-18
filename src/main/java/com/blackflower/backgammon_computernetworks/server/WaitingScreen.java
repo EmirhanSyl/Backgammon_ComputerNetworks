@@ -57,15 +57,10 @@ public final class WaitingScreen extends JFrame implements Consumer<LegacyMessag
                 info.setText("Renginiz: " + myColor + "  –  Rakip bekleniyor…");
             }
             case "START" -> {
-                // Oyun ekranını aç
                 GameScreen gs = new GameScreen(net, myColor);
-
-                // Başlangıç durumunu uygula
-                StateCodec.apply(m.get("state"), gs.state);     // GameScreen.state public olmalı
-                gs.board.repaint();                             // BoardPanel erişimi de public
-
-                gs.onMessage(m);                                // zar + currentPlayer ayarları
-                dispose();                                      // WaitingScreen kapat
+                net.setConsumer(gs::onMessage);      // <<< bundan sonra bütün mesajlar GameScreen’e
+                gs.onMessage(m);                     // ilk START’ı hemen ilet
+                dispose();
             }
             case "ERROR" -> {
                 JOptionPane.showMessageDialog(this, m.get("message"),
