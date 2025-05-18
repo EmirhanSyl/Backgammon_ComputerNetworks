@@ -71,37 +71,37 @@ public final class BackgammonServer {
 
     /* ------------- Hamle İşle ---------- */
     private synchronized void handleMove(ClientHandler from,
-            int src, int dst, int dieIdx) {
+            int src, int dst, int dieVal) {
 
-        /* 0) sıra kontrolü */
+        /* sıra kontrolü */
         if (from.color != currentTurn) {
             from.send(new LegacyMessage("ILLEGAL_MOVE")
                     .put("reason", "Not your turn"));
             return;
         }
 
-        /* 1) hamleyi doğrula */
-        int dieVal = state.getDice()[dieIdx % 2].get();
         Move mv = new Move(src, dst);
+
+        /* hamleyi doğrula */
         if (!validator.isLegal(state, mv, dieVal)) {
             from.send(new LegacyMessage("ILLEGAL_MOVE")
                     .put("reason", "Illegal by rules"));
             return;
         }
 
-        /* 2) hamleyi uygula */
+        /* hamleyi uygula */
         state.moveChecker(src, dst);
-        state.getDiceUsed()[dieIdx] = true;           // << doğru indisi işaretle
+        state.markDieUsed(dieVal);                 // <-- yalnız değerle işaretle
 
-        /* 3) sıra değişimi + zar at */
+        /* sıra değişimi + yeni zar */
         if (state.allDiceUsed()) {
             currentTurn = (currentTurn == PlayerColor.WHITE)
                     ? PlayerColor.BLACK : PlayerColor.WHITE;
-            state.setCurrentTurn(currentTurn);        // modelle senkron
+            state.setCurrentTurn(currentTurn);
             state.rollDice();
         }
 
-        /* 4) oyun bitti mi? */
+        /* oyun bitti mi? */
         if (state.allBorneOff(from.color)) {
             broadcast(new LegacyMessage("STATE_UPDATE")
                     .put("state", encodeState(state))
@@ -113,7 +113,7 @@ public final class BackgammonServer {
             return;
         }
 
-        /* 5) normal durum – herkese güncel tahta */
+        /* normal durum */
         broadcast(new LegacyMessage("STATE_UPDATE")
                 .put("state", encodeState(state))
                 .put("dice", diceString())
@@ -121,26 +121,24 @@ public final class BackgammonServer {
     }
 
     /* ------------- Yardımcılar --------- */
-    private void markDieUsed(int die) {
-        boolean[] used = state.getDiceUsed();
-        for (int i = 0; i < used.length; i++) {
-            if (!used[i] && state.getDice()[i % 2].get() == die) {
-                used[i] = true; break;
-            }
-        }
-    }
     private String diceString() {
         return state.getDice()[0].get() + "," + state.getDice()[1].get();
     }
-    /** Basit, tek satırlık tahta kodlaması: her point "idx:W3/B2" vs. boş ise atlanır. */
+
+    /**
+     * Basit, tek satırlık tahta kodlaması: her point "idx:W3/B2" vs. boş ise
+     * atlanır.
+     */
     private String encodeState(GameState st) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i <= 24; i++) {
             Point p = st.getPoint(i);
-            if (p.isEmpty()) continue;
+            if (p.isEmpty()) {
+                continue;
+            }
             sb.append(i).append(':')
-              .append(p.peek().color() == PlayerColor.WHITE ? 'W' : 'B')
-              .append(p.size()).append(';');
+                    .append(p.peek().color() == PlayerColor.WHITE ? 'W' : 'B')
+                    .append(p.size()).append(';');
         }
         sb.append("barW=").append(st.checkersOnBar(PlayerColor.WHITE)).append(';');
         sb.append("barB=").append(st.checkersOnBar(PlayerColor.BLACK)).append(';');
@@ -158,12 +156,19 @@ public final class BackgammonServer {
         }
         return b.toString();
     }
-    /** Ters işlem (isteyen istemci tarafında yapsın). */
 
-    private void broadcast(LegacyMessage m) { players.forEach(p -> p.send(m)); }
+    /**
+     * Ters işlem (isteyen istemci tarafında yapsın).
+     */
+
+    private void broadcast(LegacyMessage m) {
+        System.out.println("→ SEND to ALL : " + m);   // DEBUG
+        players.forEach(p -> p.send(m));
+    }
+
     private static void writeLine(Socket s, String line) throws IOException {
         try (PrintWriter pw = new PrintWriter(
-                 new OutputStreamWriter(s.getOutputStream(), StandardCharsets.UTF_8), true)) {
+                new OutputStreamWriter(s.getOutputStream(), StandardCharsets.UTF_8), true)) {
             pw.println(line);
         }
     }
@@ -201,7 +206,7 @@ public final class BackgammonServer {
                     System.out.println("Message Recieved From Color:" + color.toString() + " Message: " + m.toString());
                     switch (m.type()) {
                         case "MOVE" -> handleMove(this,
-                                m.getInt("from"), m.getInt("to"), m.getInt("dieIdx"));
+                                m.getInt("from"), m.getInt("to"), m.getInt("die"));
                         case "PING" -> send(new LegacyMessage("PONG"));
                         default     -> send(new LegacyMessage("ERROR")
                                             .put("message", "Unknown type " + m.type()));

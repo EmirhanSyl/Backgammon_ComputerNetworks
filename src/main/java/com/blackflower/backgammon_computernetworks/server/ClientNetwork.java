@@ -30,7 +30,9 @@ public final class ClientNetwork implements Closeable {
         try{
             String line;
             while((line=in.readLine())!=null){
-                onMsg.accept(LegacyMessage.decode(line));
+                LegacyMessage lm = LegacyMessage.decode(line);
+                System.out.println("← RECV from SRV: " + lm);      // DEBUG
+                onMsg.accept(lm);
             }
         }catch(IOException e){
             onMsg.accept(new LegacyMessage("ERROR").put("message","Connection lost"));

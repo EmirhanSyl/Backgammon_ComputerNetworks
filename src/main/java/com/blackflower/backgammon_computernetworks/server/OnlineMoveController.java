@@ -50,7 +50,7 @@ public final class OnlineMoveController extends GameStateControllerAdapter {
         net.send(new LegacyMessage("MOVE")
                 .put("from", selected)
                 .put("to", point)
-                .put("dieIdx", dieIdx));
+                .put("die",  dieIdx)); 
 
         selected = -1;                                // highlight sıfırla
     }

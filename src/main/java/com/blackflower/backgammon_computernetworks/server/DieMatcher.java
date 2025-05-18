@@ -30,9 +30,9 @@ final class DieMatcher {
 
             /* ---- BAR'dan giriş ---- */
             if (from == 0) {
-                int entry = (dir > 0) ? 25 - die : die;
+                int entry = (dir>0)? 25-die : die;
                 if (entry == to) {
-                    return i;
+                    return die;
                 }
                 continue;
             }
@@ -47,7 +47,7 @@ final class DieMatcher {
                     || (dir < 0 && expected < 1));
 
             if (overshoot || expected == to) {
-                return i;
+                return die;
             }
         }
         return -1;                                              // eşleşme yok

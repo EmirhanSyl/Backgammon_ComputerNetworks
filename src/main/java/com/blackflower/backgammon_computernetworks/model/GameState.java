@@ -49,7 +49,7 @@ public final class GameState {
         dice[0].roll();
         dice[1].roll();
         // duble ise 4 hamle hakkı
-        diceUsed = new boolean[isDouble() ? 4 : 2];
+        diceUsed = new boolean[ isDouble() ? 4 : 2 ];
     }
 
     public boolean isDouble() {
@@ -64,8 +64,13 @@ public final class GameState {
         return diceUsed;
     }
 
-    public void markDieUsed(int dieIndex) {
-        diceUsed[dieIndex] = true;
+    public void markDieUsed(int dieVal) {
+        for (int i = 0; i < diceUsed.length; i++) {
+            if (!diceUsed[i] && dice[i % 2].get() == dieVal) {
+                diceUsed[i] = true;
+                break;            // eşleşen ilk boş yuvayı kapat
+            }
+        }
     }
 
     public boolean allDiceUsed() {

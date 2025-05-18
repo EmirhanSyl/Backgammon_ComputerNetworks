@@ -17,7 +17,7 @@ public final class StandardMoveValidator implements MoveValidator {
             return false;
 
         if (mv.from() == 0) {
-            int entry = (c.direction > 0) ? die : 25 - die;
+            int entry = (c.direction > 0) ? 25 - die : die;
             return mv.to() == entry && canLand(st, c, entry);
         }
 
