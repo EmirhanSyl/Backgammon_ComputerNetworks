@@ -1,6 +1,5 @@
 com\blackflower\backgammon_computernetworks\model\GameStateControllerAdapter.class
 com\blackflower\backgammon_computernetworks\controller\GameStateController.class
-com\blackflower\backgammon_computernetworks\model\GameState.class
 com\blackflower\backgammon_computernetworks\model\Point.class
 com\blackflower\backgammon_computernetworks\server\BackgammonServer$ClientHandler.class
 com\blackflower\backgammon_computernetworks\model\Player.class
@@ -20,7 +19,6 @@ com\blackflower\backgammon_computernetworks\server\ClientNetwork.class
 com\blackflower\backgammon_computernetworks\server\StartScreen.class
 com\blackflower\backgammon_computernetworks\model\StandardMoveValidator.class
 com\blackflower\backgammon_computernetworks\server\BackgammonServer.class
-com\blackflower\backgammon_computernetworks\server\DieMatcher.class
 com\blackflower\backgammon_computernetworks\server\LegacyMessage.class
 com\blackflower\backgammon_computernetworks\model\PlayerColor.class
 com\blackflower\backgammon_computernetworks\model\Move.class

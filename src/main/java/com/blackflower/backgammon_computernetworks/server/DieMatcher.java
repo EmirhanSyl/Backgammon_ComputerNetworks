@@ -30,7 +30,7 @@ final class DieMatcher {
 
             /* ---- BAR'dan giriş ---- */
             if (from == 0) {
-                int entry = (dir>0)? 25-die : die;
+                int entry = (dir > 0) ? die : 25 - die;
                 if (entry == to) {
                     return die;
                 }

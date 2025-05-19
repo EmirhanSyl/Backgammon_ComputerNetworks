@@ -9,7 +9,7 @@ public final class OnlineMoveController extends GameStateControllerAdapter {
 
     private final ClientNetwork net;
     private final GameState state;
-    private final PlayerColor myColor;
+    public final PlayerColor myColor;
     private int selected = -1;                       // GUI highlight
 
     public OnlineMoveController(ClientNetwork net, GameState state, PlayerColor myColor) {
@@ -79,42 +79,42 @@ public final class OnlineMoveController extends GameStateControllerAdapter {
         int dir = myColor.direction;
 
         for (int i = 0; i < used.length; i++) {
-            System.out.println("Dice Used: " + used[i] + " Dice index: " + i + " Die: " + dice[i % 2].get());
             if (used[i]) {
-                continue;                // bu zar tüketildi
+                continue;                  // bu zar tüketildi
             }
             int die = dice[i % 2].get();
 
-            /* --- hedef koordinatı hesapla --- */
+            /* ---------- Hedef karesi ---------- */
             int to;
-            if (selected == 0) {                  // BAR’dan giriş
-                to = (dir > 0) ? 25 - die : die;
+            if (selected == 0) {                    // BAR’dan giriş
+                to = (dir > 0) ? die // Beyaz  → 1-6
+                        : 25 - die; // Siyah  → 24-19
             } else {
                 to = selected + die * dir;
+                /* bearing-off aşımı */
                 if (state.canBearOff(myColor)
                         && ((dir > 0 && to > 24) || (dir < 0 && to < 1))) {
-                    to = 25;                      // bearing-off aşımı
+                    to = 25;
                 }
             }
 
-            /* --- BEARING-OFF --- */
+            /* ---------- BEARING-OFF ---------- */
             if (to == 25) {
                 targets.add(25);
                 continue;
             }
 
-            /* --- Tahta aralığı dışında ise atla --- */
+            /* ---------- Tahta sınırı ---------- */
             if (to < 1 || to > 24) {
                 continue;
             }
 
-            /* --- Blok kontrolü: rakip ≥2 pul tutuyorsa inemezsin --- */
+            /* ---------- Blok kontrolü ---------- */
             Point dest = state.getPoint(to);
             if (dest.size() >= 2 && dest.peek().color() != myColor) {
                 continue;
             }
 
-            /* --- Geçerli nokta --- */
             targets.add(to);
         }
         return targets;
