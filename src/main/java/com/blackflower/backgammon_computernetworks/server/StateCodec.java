@@ -21,11 +21,13 @@ public final class StateCodec {
             else if (token.startsWith("barB="))   pushBar(st, PlayerColor.BLACK,  Integer.parseInt(token.substring(5)));
             else if (token.startsWith("offW="))   pullOff(st, PlayerColor.WHITE,  Integer.parseInt(token.substring(5)));
             else if (token.startsWith("offB="))   pullOff(st, PlayerColor.BLACK,  Integer.parseInt(token.substring(5)));
-            else if (token.startsWith("diceUsed=")) {              // ① zar bayrakları
-                boolean[] used = st.getDiceUsed();
+            else if (token.startsWith("diceUsed=")) {
                 String mask = token.substring(9);
-                for (int i = 0; i < used.length && i < mask.length(); i++)
-                    used[i] = mask.charAt(i) == '1';
+                boolean[] used = new boolean[mask.length()];
+                for (int i = 0; i < mask.length(); i++) {
+                    used[i] = (mask.charAt(i) == '1');
+                }
+                st.setDiceUsed(used);                      // ← yeni diziyi GameState’e aktar
             }
             else if (token.startsWith("turn=")) {                  // ② sıradaki oyuncu
                 st.setCurrentTurn(PlayerColor.valueOf(token.substring(5)));

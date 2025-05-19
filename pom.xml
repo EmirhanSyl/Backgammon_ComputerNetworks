@@ -8,6 +8,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>22</maven.compiler.release>
-        <exec.mainClass>com.blackflower.backgammon_computernetworks.Backgammon_ComputerNetworks</exec.mainClass>
+        <exec.mainClass>com.blackflower.backgammon_computernetworks.server.BackgammonServer</exec.mainClass>
+        <exec.mainClass>com.blackflower.backgammon_computernetworks.server.BackgammonClientApp</exec.mainClass>
+        <exec.mainClass>com.blackflower.backgammon_computernetworks.server.BackgammonClientApp</exec.mainClass>
     </properties>
 </project>

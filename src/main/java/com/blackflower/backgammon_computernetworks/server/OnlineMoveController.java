@@ -22,37 +22,42 @@ public final class OnlineMoveController extends GameStateControllerAdapter {
     @Override
     public void onPointSelected(GameContext ctx, int point) {
 
-        /* 1) sıra bende mi? */
         if (state.getCurrentTurn() != myColor) {
             selected = -1;
             return;
         }
 
-        /* 2) ilk tıklama → pul seç */
+        /* ----------- İLK TIKLAMA → pul seç ---------------- */
         if (selected == -1) {
-            if (point == 0
-                    || // bar
-                    (!state.getPoint(point).isEmpty()
-                    && state.getPoint(point).peek().color() == myColor)) {
+
+            /* BAR ancak bar’da pul varsa seçilebilir */
+            if (point == 0 && state.checkersOnBar(myColor) > 0) {
+                selected = 0;                // ✔ bar’daki pulu seçtik
+                return;
+            }
+
+            /* Tahta üzerindeki kendi pul */
+            if (point != 0
+                    && !state.getPoint(point).isEmpty()
+                    && state.getPoint(point).peek().color() == myColor) {
                 selected = point;
             }
             return;
         }
 
-        /* 3) ikinci tıklama → hedef belirle */
-        int dieIdx = DieMatcher.findDieIndex(state, selected, point);
-        if (dieIdx == -1) {
+        /* ----------- İKİNCİ TIKLAMA → hedef ---------------- */
+        int die = DieMatcher.findDieIndex(state, selected, point);
+        if (die == -1) {
             selected = -1;
             return;
         }
 
-        /* 4) MOVE mesajını zar İNDİSİ ile gönder */
         net.send(new LegacyMessage("MOVE")
                 .put("from", selected)
                 .put("to", point)
-                .put("die",  dieIdx)); 
+                .put("die", die));
 
-        selected = -1;                                // highlight sıfırla
+        selected = -1;
     }
 
     /* ----------------  BoardPanel için ---------------- */
@@ -74,6 +79,7 @@ public final class OnlineMoveController extends GameStateControllerAdapter {
         int dir = myColor.direction;
 
         for (int i = 0; i < used.length; i++) {
+            System.out.println("Dice Used: " + used[i] + " Dice index: " + i + " Die: " + dice[i % 2].get());
             if (used[i]) {
                 continue;                // bu zar tüketildi
             }

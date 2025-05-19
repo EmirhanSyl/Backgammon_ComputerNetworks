@@ -63,12 +63,18 @@ public final class GameState {
     public boolean[] getDiceUsed() {
         return diceUsed;
     }
+    
+    public void setDiceUsed(boolean[] newArr) {
+        this.diceUsed = newArr;
+    }
 
     public void markDieUsed(int dieVal) {
+        System.out.println("Dice length: " + diceUsed.length);
         for (int i = 0; i < diceUsed.length; i++) {
             if (!diceUsed[i] && dice[i % 2].get() == dieVal) {
                 diceUsed[i] = true;
-                break;            // eşleşen ilk boş yuvayı kapat
+                System.out.println("Used Dice: " + dice[i % 2].get());
+                if (isDouble()) break;
             }
         }
     }
