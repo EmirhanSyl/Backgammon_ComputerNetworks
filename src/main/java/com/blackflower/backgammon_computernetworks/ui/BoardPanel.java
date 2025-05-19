@@ -26,13 +26,17 @@ public final class BoardPanel extends JPanel {
     private static final Color HIGHLIGHT = new Color(255, 215, 0, 160); // altın yarı saydam
     private static final Color TARGET_DOT = new Color(50, 220, 255, 180);
     private final GameContext ctx;
-    private static final int BEAR_W = TRI_W;          // ← yeni
+    private static final int BEAR_W = TRI_W * 1;   // üçgen kadar geniş
+
     private static final Rectangle BEAR_OFF_WHITE
-            = new Rectangle(PADDING + TRI_W * 12 + BAR_W, PADDING,
-                    BEAR_W, TRI_H);             // yalnız üst yarı
+            = new Rectangle(PADDING + TRI_W * 12 + BAR_W,
+                    PADDING,
+                    BEAR_W, TRI_H);
+
     private static final Rectangle BEAR_OFF_BLACK
-            = new Rectangle(PADDING + TRI_W * 12 + BAR_W, PADDING + TRI_H,
-                    BEAR_W, TRI_H);             // yalnız alt yarı
+            = new Rectangle(BEAR_OFF_WHITE.x,
+                    PADDING + TRI_H,
+                    BEAR_W, TRI_H);
 
     public BoardPanel(GameContext ctx) {
         this.ctx = ctx;
@@ -75,7 +79,7 @@ public final class BoardPanel extends JPanel {
         g.setColor(new Color(90, 60, 40));
         int barX = PADDING + TRI_W * 6;
         g.fillRect(barX, PADDING, BAR_W, TRI_H * 2);
-        
+
         // Bear-off sütun zemini
         g.setColor(new Color(120, 70, 40));
         g.fillRect(BEAR_OFF_WHITE.x, BEAR_OFF_WHITE.y,
@@ -85,6 +89,7 @@ public final class BoardPanel extends JPanel {
         g.setColor(Color.WHITE);
         g.setFont(new Font("SansSerif", Font.BOLD, 14));
         g.drawString("OFF", BEAR_OFF_WHITE.x + 6, BEAR_OFF_WHITE.y + 16);
+
     }
 
     private Polygon trianglePolygon(int pointIdx) {
@@ -177,10 +182,9 @@ public final class BoardPanel extends JPanel {
         /* bear-off bölgeleri */
         int bearLeft = PADDING + TRI_W * 12 + BAR_W;
         if (x >= bearLeft && x <= bearLeft + BEAR_W) {
-            // üst yarı veya alt yarı fark etmeksizin
             return 25;
         }
-        
+
         boolean bottom = relY > TRI_H;
         int col = relX < TRI_W * 6 ? (relX / TRI_W) : ((relX - BAR_W) / TRI_W);
         int idx = bottom ? 12 - col : 13 + col;
@@ -233,13 +237,15 @@ public final class BoardPanel extends JPanel {
         OnlineMoveController mp = ctx.asOnline(); 
         if (mp == null) return;
         for (int tgt : mp.getLegalTargets()) {
-            if (tgt == 25) continue; // bear-off işareti şimdilik yok
+            if (tgt == 25) {
+                continue; // bear-off işareti şimdilik yok
+            }
             if (tgt == 25) {
                 Rectangle b = (mp.myColor == PlayerColor.WHITE)
                         ? BEAR_OFF_WHITE : BEAR_OFF_BLACK;
                 int cx = b.x + b.width / 2, cy = b.y + b.height / 2;
                 g.setColor(TARGET_DOT);
-                g.fillOval(cx - 10, cy - 10, 20, 20);     // büyük yuvarlak hedef
+                g.fillOval(cx - 14, cy - 14, 28, 28);   // büyük hedef
                 continue;
             }
             Rectangle r = checkerBounds(tgt, ctx.state().getPoint(tgt).size());

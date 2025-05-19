@@ -163,6 +163,10 @@ public final class GameState {
         }
         return true;    // tüm pullar evde
     }
+    
+    public void resetBorneOff() {
+        borneOffWhite = borneOffBlack = 0;
+    }
 
     /* ---------- Getters / setters --------------------------------------- */
     public PlayerColor getCurrentTurn() {

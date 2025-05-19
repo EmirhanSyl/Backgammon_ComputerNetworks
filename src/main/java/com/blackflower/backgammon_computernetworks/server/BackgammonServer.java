@@ -63,6 +63,10 @@ public final class BackgammonServer {
         players.get(1).send(new LegacyMessage("WELCOME").put("playerColor", "BLACK"));
 
         state.rollDice();
+        /* YENİ – hamle yoksa anında pasla (en çok 2 defa: çift pas ihtimali) */
+        for (int i = 0; i < 2 && !hasAnyLegalMove(); i++) {
+            endTurnAndRoll();
+        }
         broadcast(new LegacyMessage("START")
                 .put("state", encodeState(state))
                 .put("dice", diceString())
@@ -123,6 +127,16 @@ public final class BackgammonServer {
     /* ------------- Yardımcılar --------- */
     private String diceString() {
         return state.getDice()[0].get() + "," + state.getDice()[1].get();
+    }
+    
+    private boolean hasAnyLegalMove() {
+        return new StandardMoveValidator().playerHasMove(state);
+    }
+
+    private void endTurnAndRoll() {
+        currentTurn = (currentTurn == PlayerColor.WHITE) ? PlayerColor.BLACK : PlayerColor.WHITE;
+        state.setCurrentTurn(currentTurn);
+        state.rollDice();
     }
 
     /**

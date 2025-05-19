@@ -64,6 +64,7 @@ public final class StateCodec {
 
     /* ---------- yardımcılar ---------- */
     private static void clear(GameState st){
+        st.resetBorneOff();
         for(int i=0;i<=24;i++){ Point p=st.getPoint(i); while(!p.isEmpty()) p.pop();}
         while(st.checkersOnBar(PlayerColor.WHITE)>0) st.enterFromBar(PlayerColor.WHITE);
         while(st.checkersOnBar(PlayerColor.BLACK)>0) st.enterFromBar(PlayerColor.BLACK);

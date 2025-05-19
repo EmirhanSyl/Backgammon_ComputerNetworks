@@ -55,6 +55,43 @@ public final class StandardMoveValidator implements MoveValidator {
         if (mv.to() != expected) return false;           // yanlış mesafe
         return canLand(st, c, mv.to());
     }
+    
+    public boolean playerHasMove(GameState st) {
+        PlayerColor c = st.getCurrentTurn();
+        Dice[] dice = st.getDice();
+        boolean[] used = st.getDiceUsed();
+
+        /* BAR’da pul varsa yalnız giriş denenir */
+        if (st.checkersOnBar(c) > 0) {
+            for (int i = 0; i < used.length; i++) {
+                if (!used[i] && canLand(st, c, (c.direction > 0 ? dice[i % 2].get() : 25 - dice[i % 2].get()))) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        /* Tahtadaki tüm pullar */
+        for (int from = 1; from <= 24; from++) {
+            Point p = st.getPoint(from);
+            if (p.isEmpty() || p.peek().color() != c) {
+                continue;
+            }
+            for (int i = 0; i < used.length; i++) {
+                if (used[i]) {
+                    continue;
+                }
+                int die = dice[i % 2].get();
+                int to = from + die * c.direction;
+                if (st.canBearOff(c) && ((c.direction > 0 && to > 24) || (c.direction < 0 && to < 1))) {
+                    to = 25;
+                }
+                if (isLegal(st, new Move(from, to), die)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     private boolean canLand(GameState st, PlayerColor c, int point) {
         // bearing-off
