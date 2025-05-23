@@ -3,6 +3,7 @@ package com.blackflower.backgammon_computernetworks.server;
 import com.blackflower.backgammon_computernetworks.GameInitializer;
 import com.blackflower.backgammon_computernetworks.model.*;
 import java.io.*;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -34,7 +35,7 @@ public final class BackgammonServer {
 
     /* ------------- Sunucu Döngüsü ------ */
     private void start() throws IOException {
-        try (ServerSocket ss = new ServerSocket(PORT)) {
+        try (ServerSocket ss = new ServerSocket(PORT, 50, InetAddress.getByName("0.0.0.0"));) {
             System.out.println("Legacy Tavla sunucusu port " + PORT + " üzerinde çalışıyor.");
             while (true) {
                 Socket s = ss.accept();
