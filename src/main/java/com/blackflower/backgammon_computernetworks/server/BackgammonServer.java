@@ -35,7 +35,7 @@ public final class BackgammonServer {
 
     /* ------------- Sunucu Döngüsü ------ */
     private void start() throws IOException {
-        try (ServerSocket ss = new ServerSocket(PORT, 50, InetAddress.getByName("0.0.0.0"));) {
+        try (ServerSocket ss = new ServerSocket(PORT, 50, InetAddress.getByName("188.227.32.99"));) {
             System.out.println("Legacy Tavla sunucusu port " + PORT + " üzerinde çalışıyor.");
             while (true) {
                 Socket s = ss.accept();
